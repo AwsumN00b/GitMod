@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+# Painstakingly formatted by Brel00m
+# It was worth it
+# Probably best left untouched now though
+
 from colorama import Fore, Back, Style
 
 def thunking():

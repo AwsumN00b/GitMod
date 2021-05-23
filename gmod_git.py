@@ -14,6 +14,11 @@ class GMShell(Cmd):
         print("Bye Bye!")
         raise SystemExit
 
+    def do_open(self, args):
+        """Choose a repo to work out of. From here you can import and export
+        files from GarrysMod as you need to"""
+
+        pass
 
     def do_init(self, args):
         """Creates a new repo with whatever name you give it.
@@ -38,8 +43,16 @@ class GMShell(Cmd):
             print(i, ":", repo)
             i += 1
 
-    def do_open(self, args):
 
+    def do_clone(self, args):
+        """Takes a link to a Git Repository (GitHub primarily) as an argument.
+        This will attempt to clone the repo in to the GitMod directory"""
+
+        name = get_repo_name_from_url(args)
+
+        cloned_repo = GmodRepo(name, args)
+
+        self.do_open(name)
 
 
 

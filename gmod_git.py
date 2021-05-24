@@ -6,6 +6,8 @@ import os
 from cmd import Cmd
 from thunking import thunking
 from GmodRepo import GmodRepo
+from RepoShell import RepoShell
+
 
 class GMShell(Cmd):
 
@@ -14,11 +16,25 @@ class GMShell(Cmd):
         print("Bye Bye!")
         raise SystemExit
 
+
     def do_open(self, args):
         """Choose a repo to work out of. From here you can import and export
         files from GarrysMod as you need to"""
 
-        pass
+        repos = get_local_repos()
+
+        if args.isdigit():
+            n = int(args)
+        else:
+            self.do_repos("")
+            n = int(input("Enter the number of the repo you want to open: "))
+
+        repo = GmodRepo(repos[n])
+
+        prompt = RepoShell(repo)
+        prompt.prompt = "[" + repo.name + "] ~~~> "
+        prompt.cmdloop()
+
 
     def do_init(self, args):
         """Creates a new repo with whatever name you give it.
@@ -38,7 +54,7 @@ class GMShell(Cmd):
 
         repos = get_local_repos()
 
-        i = 1
+        i = 0
         for repo in repos:
             print(i, ":", repo)
             i += 1

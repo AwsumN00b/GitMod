@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 
+# Written by Brel00m
+
 import git, os
 from config import Gmod_Location as gmod
 
-# Written by Brel00m
 
 class GmodRepo():
 

@@ -6,11 +6,16 @@ import os
 from cmd import Cmd
 from thunking import thunking
 from GmodRepo import GmodRepo
+from config import KamThunking
 from RepoShell import RepoShell
 
 
 class GMShell(Cmd):
 
+    prompt = "~~~> "
+    repo = None
+
+    # ~~Commands for when not in a repo~~
     def do_quit(self, args):
         """Exits the program"""
         print("Bye Bye!")
@@ -29,11 +34,10 @@ class GMShell(Cmd):
             self.do_repos("")
             n = int(input("Enter the number of the repo you want to open: "))
 
-        repo = GmodRepo(repos[n])
+        self.repo = GmodRepo(repos[n])
 
-        prompt = RepoShell(repo)
-        prompt.prompt = "[" + repo.name + "] ~~~> "
-        prompt.cmdloop()
+
+        self.prompt = "[" + self.repo.name + "] ~~~> "
 
 
     def do_init(self, args):
@@ -71,6 +75,25 @@ class GMShell(Cmd):
         self.do_open(name)
 
 
+    # ~~ Commands for inside a repo ~~
+    def do_close(self, args):
+        """Closes the current repo"""
+
+        if self.repo is None:
+            print("No repo is currently opened")
+        else:
+            self.prompt = "~~~> "
+            self.repo = None
+
+
+    def do_extract(self, args):
+
+        if self.repo is None:
+            print("No repo is currently opened")
+        else:
+            self.repo.extract_smh()
+
+
 
 def get_local_repos():
     """Looks in the GitMod folder and takes every subfolder to be a Git repo"""
@@ -90,10 +113,7 @@ def get_repo_name_from_url(url: str) -> str:
     return url[last_slash_index + 1:last_suffix_index]
 
 
-def main():
-    prompt = GMShell()
-    prompt.prompt = "~~~> "
-    prompt.cmdloop(thunking())
-
 if __name__ == '__main__':
-    main()
+    if KamThunking:
+        thunking()
+    GMShell().cmdloop()

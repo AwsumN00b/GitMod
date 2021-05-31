@@ -15,7 +15,7 @@ class GMShell(Cmd):
     prompt = "~~~> "
     repo = None
 
-    # ~~Commands for when not in a repo~~
+    # ~~ Commands for when not in a repo ~~
     def do_quit(self, args):
         """Exits the program"""
         print("Bye Bye!")
@@ -87,16 +87,20 @@ class GMShell(Cmd):
 
 
     def do_extract(self, args):
+        """Retrieves all known associated files from your Gmod
+        and updates the repo (Associated files will have the repo's
+        name at the beginning of their filename)"""
 
         if self.repo is None:
             print("No repo is currently opened")
         else:
             self.repo.extract_smh()
+            self.repo.extract_save()
 
 
 
 def get_local_repos():
-    """Looks in the GitMod folder and takes every subfolder to be a Git repo"""
+    """Lists all folders inside the GitMod directory"""
 
     return os.listdir("GitMod")
 

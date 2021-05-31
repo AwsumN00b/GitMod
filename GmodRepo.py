@@ -17,7 +17,7 @@ class GmodRepo():
 
             try:
                 os.mkdir("GitMod\\" + repo_name + "\\smh")
-                os.mkdir("Gitmod\\" + repo_name + "\\save")
+                os.mkdir("Gitmod\\" + repo_name + "\\saves")
             except FileExistsError:
                 pass
 
@@ -48,6 +48,19 @@ class GmodRepo():
         file_target = "GitMod\\" + self.name + "\\smh\\"
 
         for file in files:
+            shutil.copy(file_source + file, file_target + file)
+
+
+    def extract_save(self):
+        saves = self.pick_files(gmod + r"\garrysmod\saves", ".gms")
+        icons = self.pick_files(gmod + r"\garrysmod\saves", ".jpg")
+
+        file_source = gmod + r"\garrysmod\saves\\"
+        file_target = "GitMod\\" + self.name + "\\saves"
+
+        for file in saves:
+            shutil.copy(file_source + file, file_target + file)
+        for file in icons: # taking the save thumbnails into the repo too
             shutil.copy(file_source + file, file_target + file)
 
 

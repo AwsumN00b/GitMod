@@ -59,9 +59,30 @@ class GmodRepo():
         file_target = "GitMod\\" + self.name + "\\saves"
 
         for file in saves:
-            shutil.copy(file_source + file, file_target + file)
+            shutil.copy(file_source + file, file_target)
         for file in icons: # taking the save thumbnails into the repo too
-            shutil.copy(file_source + file, file_target + file)
+            shutil.copy(file_source + file, file_target)
+
+        print("Data successfully copied into Garry'd Mod")
+
+
+    def inject(self):
+        smh_dir = "GitMod\\" + self.name + "\\smh\\"
+        save_dir = "GitMod\\" + self.name + "\\saves\\"
+
+        smh_gmod = gmod + r"\garrysmod\data\smh\\"
+        save_gmod = gmod + r"\garrysmod\saves\\"
+
+        files = self.pick_files(smh_dir, ".txt")
+        for file in files:
+            shutil.copy(smh_dir + file, smh_gmod)
+
+        files = self.pick_files(save_dir, ".txt")
+        for file in files:
+            shutil.copy(save_dir + file, save_gmod)
+            file = file[:-4] + ".jpg"  # For copying the save thumbnail too
+            shutil.copy(save_dir + file, save_gmod)
+
 
 
     def pull():

@@ -15,8 +15,7 @@ To make this program work, you are going to need the following installed on your
 
 ## To Do
 Add following functionalities:
-- Inject SMH
-- Inject Saves
+- Add files
 - Commit
 - Push
 - Pull

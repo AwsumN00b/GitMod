@@ -35,8 +35,6 @@ class GMShell(Cmd):
             n = int(input("Enter the number of the repo you want to open: "))
 
         self.repo = GmodRepo(repos[n])
-
-
         self.prompt = "[" + self.repo.name + "] ~~~> "
 
 
@@ -96,6 +94,16 @@ class GMShell(Cmd):
         else:
             self.repo.extract_smh()
             self.repo.extract_save()
+
+
+    def do_inject(self, args):
+        """Takes the save data from the current repo, and injects it into
+        Gmod's files so you can use them."""
+
+        if self.repo is None:
+            print("No repo is currently opened")
+        else:
+            self.repo.inject()
 
 
 

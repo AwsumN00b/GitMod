@@ -56,10 +56,7 @@ class GMShell(Cmd):
 
         repos = get_local_repos()
 
-        i = 0
-        for repo in repos:
-            print(i, ":", repo)
-            i += 1
+        print_columns(repos)
 
 
     def do_clone(self, args):
@@ -106,6 +103,30 @@ class GMShell(Cmd):
             self.repo.inject()
 
 
+    def do_add(self, args):
+        """Pick existing files from your Gmod install to be added to the opened repo.
+        Files will be renamed and also copied into the repo.
+
+File types supported (type these terms to add that type of file):
+smh
+saves"""
+
+        addable_filetypes = [
+        "smh",
+        "saves"
+        ]
+
+        if self.repo is None:
+            print("No repo is currently opened")
+        elif args == "":
+            print("Choose a file type to start adding:")
+            print_columns(addable_filetypes)
+            args = int(input())
+
+        self.repo.add_files(addable_filetypes[args])
+        self.do_extract("")
+
+
 
 def get_local_repos():
     """Lists all folders inside the GitMod directory"""
@@ -123,6 +144,25 @@ def get_repo_name_from_url(url: str) -> str:
         raise Exception("Badly formatted url {}".format(url))
 
     return url[last_slash_index + 1:last_suffix_index]
+
+
+def print_columns(list):
+    """Prints a list as two columns to save screen space"""
+    if len(list) % 2 != 0:
+        last = list.pop()
+    else:
+        last = None
+
+    split = len(list) // 2
+    l1 = list[0:split]
+    l2 = list[split:]
+    i = 0
+    for key, value in zip(l1,l2):
+        print("[{}]: {:<20s} [{}]: {}".format(i, key, i + split, value))
+        i += 1
+
+    if last is not None:
+        print(" " * 25, "[{}]: {}".format(i + split, last))
 
 
 if __name__ == '__main__':

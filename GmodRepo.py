@@ -41,6 +41,30 @@ class GmodRepo():
         return files
 
 
+    def add_files(self, filetype):
+
+        # Get correct file path for each file type
+        if filetype == "smh":
+            path = gmod + r"\garrysmod\data\smh"
+            endw = ".txt"
+        elif filetype == "saves":
+            path = gmod + r"\garrysmod\saves"
+            endw = ".gms"
+
+        files = os.listdir(path)
+        files = [file for file in files if not file.startswith(self.name + "_") and file.endswith(endw)]
+        print_columns(files)
+        print("Type the numbers of files you wish to add (You can type multiple): ")
+        adding_files = [int(i) for i in input().split()]
+
+        for num in adding_files:
+            file_src = path + "\\" + files[num]
+            file_dst = path + "\\" + self.name + "_" + files[num]
+            os.rename(file_src, file_dst)
+
+        print("Files successfully added!")
+
+
     def extract_smh(self):
         files = self.pick_files(gmod + r"\garrysmod\data\smh", ".txt")
 
@@ -91,3 +115,23 @@ class GmodRepo():
 
     def commit():
         pass
+
+
+
+def print_columns(list):
+    """Prints a list as two columns to save screen space"""
+    if len(list) % 2 != 0:
+        last = list.pop()
+    else:
+        last = None
+
+    split = len(list) // 2
+    l1 = list[0:split]
+    l2 = list[split:]
+    i = 0
+    for key, value in zip(l1,l2):
+        print("[{}]: {:<20s} [{}]: {}".format(i, key, i + split, value))
+        i += 1
+
+    if last is not None:
+        print(" " * 25, "[{}]: {}".format(i + split, last))

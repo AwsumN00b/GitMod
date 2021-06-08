@@ -13,9 +13,12 @@ class GmodRepo():
 
         try:
             os.mkdir("GitMod\\" + repo_name)
+
             os.mkdir("GitMod\\" + repo_name + "\\smh")
             os.mkdir("GitMod\\" + repo_name + "\\saves")
+
             self.repo = git.Repo.init("GitMod\\" + repo_name)
+            self.repo.git.add(".")
             self.repo.index.commit("Initial Commit via GitMod")
         except FileExistsError:
             self.repo = git.Repo("GitMod\\" + repo_name)

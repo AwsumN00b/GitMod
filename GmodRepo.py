@@ -8,22 +8,17 @@ from config import Gmod_Location as gmod
 
 class GmodRepo():
 
-    def __init__(self, repo_name, link=None):
+    def __init__(self, repo_name):
         self.name = repo_name
 
-        if link is None:
-            repo_dir = os.path.join("GitMod", self.name)
-            r = git.Repo.init(repo_dir)
-
-            try:
-                os.mkdir("GitMod\\" + repo_name + "\\smh")
-                os.mkdir("Gitmod\\" + repo_name + "\\saves")
-            except FileExistsError:
-                pass
-
-            r.index.commit("initial commit")
-        else:
-            git.Git("GitMod").clone(link)
+        try:
+            os.mkdir("GitMod\\" + repo_name)
+            os.mkdir("GitMod\\" + repo_name + "\\smh")
+            os.mkdir("GitMod\\" + repo_name + "\\saves")
+            self.repo = git.Repo.init("GitMod\\" + repo_name)
+            self.repo.index.commit("Initial Commit via GitMod")
+        except FileExistsError:
+            self.repo = git.Repo("GitMod\\" + repo_name)
 
 
     def path_checker(self):
@@ -41,7 +36,7 @@ class GmodRepo():
         return files
 
 
-    def add_files(self, filetype):
+    def dub_files(self, filetype):
 
         # Get correct file path for each file type
         if filetype == "smh":
@@ -62,7 +57,7 @@ class GmodRepo():
             file_dst = path + "\\" + self.name + "_" + files[num]
             os.rename(file_src, file_dst)
 
-        print("Files successfully added!")
+        print("Files renamed within Gmod!")
 
 
     def extract_smh(self):
@@ -74,6 +69,7 @@ class GmodRepo():
         for file in files:
             shutil.copy(file_source + file, file_target + file)
 
+        self.add_all()
 
     def extract_save(self):
         saves = self.pick_files(gmod + r"\garrysmod\saves", ".gms")
@@ -87,7 +83,7 @@ class GmodRepo():
         for file in icons: # taking the save thumbnails into the repo too
             shutil.copy(file_source + file, file_target)
 
-        print("Data successfully copied into Garry'd Mod")
+        self.add_all()
 
 
     def inject(self):
@@ -108,13 +104,20 @@ class GmodRepo():
             shutil.copy(save_dir + file, save_gmod)
 
 
-
-    def pull():
+    def fetch(self):
         pass
 
 
-    def commit():
+    def pull(self):
         pass
+
+
+    def commit(self, author):
+        commit_desc = input("Describe the changes you have made: ")
+        self.repo.index.commit(commit_desc, author)
+
+    def add_all(self):
+        self.repo.git.add(u=True)
 
 
 

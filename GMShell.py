@@ -2,18 +2,19 @@
 
 # Written by Brel00m
 
-import os
+import os, git
 from cmd import Cmd
 from thunking import thunking
 from GmodRepo import GmodRepo
-from config import KamThunking
 from RepoShell import RepoShell
+from config import *
 
 
 class GMShell(Cmd):
 
     prompt = "~~~> "
     repo = None
+    author = git.Actor(Name, Email) # author object oaded from config.py info
 
     # ~~ Commands for when not in a repo ~~
     def do_quit(self, args):
@@ -82,9 +83,11 @@ class GMShell(Cmd):
 
 
     def do_extract(self, args):
-        """Retrieves all known associated files from your Gmod
-        and updates the repo (Associated files will have the repo's
-        name at the beginning of their filename)"""
+        """
+Retrieves all known associated files from your Gmod
+and updates the repo (Associated files will have the repo's
+name at the beginning of their filename)
+"""
 
         if self.repo is None:
             print("No repo is currently opened")
@@ -94,8 +97,10 @@ class GMShell(Cmd):
 
 
     def do_inject(self, args):
-        """Takes the save data from the current repo, and injects it into
-        Gmod's files so you can use them."""
+        """
+Takes the save data from the current repo, and injects it into
+Gmod's files so you can use them.
+"""
 
         if self.repo is None:
             print("No repo is currently opened")
@@ -103,13 +108,15 @@ class GMShell(Cmd):
             self.repo.inject()
 
 
-    def do_add(self, args):
-        """Pick existing files from your Gmod install to be added to the opened repo.
-        Files will be renamed and also copied into the repo.
+    def do_dub(self, args):
+        """
+Rename files to make them part of the current repo.
+(You may want to do extract after you are finished adding files)
 
 File types supported (type these terms to add that type of file):
 smh
-saves"""
+saves
+"""
 
         addable_filetypes = [
         "smh",
@@ -124,8 +131,6 @@ saves"""
             args = int(input())
 
         self.repo.add_files(addable_filetypes[args])
-        self.do_extract("")
-
 
 
 def get_local_repos():

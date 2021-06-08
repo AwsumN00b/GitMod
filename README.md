@@ -14,10 +14,14 @@ To make this program work, you are going to need the following installed on your
 - [Stop Motion Helper](https://steamcommunity.com/sharedfiles/filedetails/?id=111895870)
 
 ## To Do
+Fix these things:
+- Edge cases all around
+
 Add following functionalities:
 - Commit
 - Push
 - Pull
+- function for picking files either by name or numerically
 - Create compiled version for non-techy people to use
 - Make a GUI, again to enhance the experience
 

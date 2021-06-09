@@ -18,7 +18,6 @@ Fix these things:
 - Edge cases all around
 
 Add following functionalities:
-- Commit
 - Push
 - Pull
 - function for picking files either by name or numerically

@@ -115,12 +115,12 @@ class GmodRepo():
         pass
 
 
-    def commit(self, author):
-        commit_desc = input("Describe the changes you have made: ")
-        self.repo.index.commit(commit_desc, author)
+    def commit(self, commit_desc):
+        self.add_all()
+        self.repo.index.commit(commit_desc)
 
     def add_all(self):
-        self.repo.git.add(u=True)
+        self.repo.git.add(".")
 
 
 

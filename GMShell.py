@@ -14,7 +14,6 @@ class GMShell(Cmd):
 
     prompt = "~~~> "
     repo = None
-    author = git.Actor(Name, Email) # author object oaded from config.py info
 
     # ~~ Commands for when not in a repo ~~
     def do_quit(self, args):
@@ -118,7 +117,7 @@ smh
 saves
 """
 
-        addable_filetypes = [
+        dubable_filetypes = [
         "smh",
         "saves"
         ]
@@ -126,11 +125,18 @@ saves
         if self.repo is None:
             print("No repo is currently opened")
         elif args == "":
-            print("Choose a file type to start adding:")
-            print_columns(addable_filetypes)
+            print("Choose a file type to start dubbing:")
+            print_columns(dubable_filetypes)
             args = int(input())
 
-        self.repo.add_files(addable_filetypes[args])
+        self.repo.dub_files(dubable_filetypes[args])
+
+
+    def do_commit(self, args):
+        commit_desc = input("Describe the changes you have made: ")
+
+        self.repo.commit(commit_desc)
+
 
 
 def get_local_repos():

@@ -8,6 +8,7 @@ The function goals of this application are to incorporate Stop Motion Helper sav
 ## Requirements
 To make this program work, you are going to need the following installed on your computer. (This program is set up to work for Windows 10 only)
 - [Python 3](https://www.python.org/downloads/)
+- [Git](https://git-scm.com/downloads)
 - GitPython library. Type this in your terminal:
 `` python3 -m pip install GitPython ``
 - GarrysMod (Steam install)
@@ -18,7 +19,6 @@ Fix these things:
 - Edge cases all around
 
 Add following functionalities:
-- Push
 - Pull
 - function for picking files either by name or numerically
 - Create compiled version for non-techy people to use

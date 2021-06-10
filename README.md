@@ -16,10 +16,9 @@ To make this program work, you are going to need the following installed on your
 
 ## To Do
 Fix these things:
-- Edge cases all around
+- Edge cases all around (Specifics will be added as testing occurs)
 
 Add following functionalities:
-- Pull
 - function for picking files either by name or numerically
 - Create compiled version for non-techy people to use
 - Make a GUI, again to enhance the experience

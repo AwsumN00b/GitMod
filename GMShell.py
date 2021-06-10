@@ -135,12 +135,19 @@ saves
 
 
     def do_commit(self, args):
+        """
+Saves the current state of the repo as a new commit.
+You will be asked to describe what you have added or changed.
+"""
         commit_desc = input("Describe the changes you have made: ")
 
         self.repo.commit(commit_desc)
 
 
     def do_push(self, args):
+        """
+Send all your commits off to the remote repo, updating everybody else with the changes you have made.
+"""
         if self.repo is None:
             print("No repo is currently opened")
         else:
@@ -148,6 +155,10 @@ saves
 
 
     def do_fetch(self, args):
+        """
+Retrieve the latest version of the repo from the Remote.
+"""
+
         if self.repo is None:
             print("No repo is currently opened")
         else:

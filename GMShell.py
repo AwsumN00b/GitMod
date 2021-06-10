@@ -4,6 +4,7 @@
 
 import os, git
 from cmd import Cmd
+from getpass import getpass
 from thunking import thunking
 from GmodRepo import GmodRepo
 from RepoShell import RepoShell
@@ -63,14 +64,15 @@ class GMShell(Cmd):
         """Takes a link to a Git Repository (GitHub primarily) as an argument.
         This will attempt to clone the repo in to the GitMod directory"""
 
-        name = get_repo_name_from_url(args)
+        repo_name = get_repo_name_from_url(args)
 
-        cloned_repo = GmodRepo(name, args)
+        if repo_name is not False:
+            git.Repo.clone_from(args, "GitMod\\" + repo_name)
+            print("Repo has been cloned!")
 
-        self.do_open(name)
 
+        # ~~ Commands for inside a repo ~~
 
-    # ~~ Commands for inside a repo ~~
     def do_close(self, args):
         """Closes the current repo"""
 
@@ -138,6 +140,10 @@ saves
         self.repo.commit(commit_desc)
 
 
+    def do_push(self, args):
+        self.repo.push()
+
+
 
 def get_local_repos():
     """Lists all folders inside the GitMod directory"""
@@ -152,7 +158,7 @@ def get_repo_name_from_url(url: str) -> str:
         last_suffix_index = len(url)
 
     if last_slash_index < 0 or last_suffix_index <= last_slash_index:
-        raise Exception("Badly formatted url {}".format(url))
+        return False
 
     return url[last_slash_index + 1:last_suffix_index]
 

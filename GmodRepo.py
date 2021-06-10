@@ -11,15 +11,17 @@ class GmodRepo():
     def __init__(self, repo_name):
         self.name = repo_name
 
-        try:
+        if not os.path.isdir("GitMod\\" + repo_name):
             os.mkdir("GitMod\\" + repo_name)
 
+        try:
             os.mkdir("GitMod\\" + repo_name + "\\smh")
             os.mkdir("GitMod\\" + repo_name + "\\saves")
 
             self.repo = git.Repo.init("GitMod\\" + repo_name)
             self.repo.git.add(".")
             self.repo.index.commit("Initial Commit via GitMod")
+
         except FileExistsError:
             self.repo = git.Repo("GitMod\\" + repo_name)
 
@@ -106,12 +108,12 @@ class GmodRepo():
             file = file[:-4] + ".jpg"  # For copying the save thumbnail too
             shutil.copy(save_dir + file, save_gmod)
 
+    def push(self):
+        origin = self.repo.remote("origin")
+        origin.push()
+
 
     def fetch(self):
-        pass
-
-
-    def pull(self):
         pass
 
 

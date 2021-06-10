@@ -108,18 +108,21 @@ class GmodRepo():
             file = file[:-4] + ".jpg"  # For copying the save thumbnail too
             shutil.copy(save_dir + file, save_gmod)
 
+
     def push(self):
         origin = self.repo.remote("origin")
         origin.push()
 
 
     def fetch(self):
-        pass
+        origin = self.repo.remote("origin")
+        origin.pull()
 
 
     def commit(self, commit_desc):
         self.add_all()
         self.repo.index.commit(commit_desc)
+
 
     def add_all(self):
         self.repo.git.add(".")

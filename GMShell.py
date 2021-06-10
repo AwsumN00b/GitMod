@@ -141,7 +141,17 @@ saves
 
 
     def do_push(self, args):
-        self.repo.push()
+        if self.repo is None:
+            print("No repo is currently opened")
+        else:
+            self.repo.push()
+
+
+    def do_fetch(self, args):
+        if self.repo is None:
+            print("No repo is currently opened")
+        else:
+            self.repo.fetch()
 
 
 

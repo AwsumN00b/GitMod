@@ -10,16 +10,20 @@ To make this program work, you are going to need the following installed on your
 - [Python 3](https://www.python.org/downloads/)
 - [Git](https://git-scm.com/downloads)
 - GitPython library. Type this in your terminal:
-`` python3 -m pip install GitPython ``
+`` python -m pip install GitPython ``
+- Colorama. Type this in your terminal:
+`` python -m pip install colorama ``
 - GarrysMod (Steam install)
 - [Stop Motion Helper](https://steamcommunity.com/sharedfiles/filedetails/?id=111895870)
 
 ## To Do
 Fix these things:
 - Edge cases all around (Specifics will be added as testing occurs)
+- add repocheck to dub function
+- check if overwriting files are smaller than original and ask user if they are sure about this action
 
 Add following functionalities:
-- function for picking files either by name or numerically
+- function for picking files either by name or numerically, and both 
 - Create compiled version for non-techy people to use
 - Make a GUI, again to enhance the experience
 

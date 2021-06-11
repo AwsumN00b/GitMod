@@ -23,7 +23,6 @@ To make this program work, you are going to need the following installed on your
 Fix these things:
 - Edge cases all around (Specifics will be added as testing occurs)
 - check if overwriting files are smaller than original and ask user if they are sure about this action
-- Make repo open as soon as its cloned and also push if its the initial commit
 
 Add following functionalities:
 - function for picking files either by name or numerically, and both

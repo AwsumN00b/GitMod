@@ -71,12 +71,15 @@ GmodRepo utilises these prefixes to know what files are meant to be a part of it
         files = [file for file in files if not file.startswith(self.name + "_") and file.endswith(endw)]
         print_columns(files)
         print("Type the numbers of files you wish to add (You can type multiple): ")
-        adding_files = [int(i) for i in input().split()]
+        adding_files = [int(i) for i in input().split() if i.isdigit()]
 
         for num in adding_files:
-            file_src = path + "\\" + files[num]
-            file_dst = path + "\\" + self.name + "_" + files[num]
-            os.rename(file_src, file_dst)
+            if num > len(files):
+                file_src = path + "\\" + files[num]
+                file_dst = path + "\\" + self.name + "_" + files[num]
+                os.rename(file_src, file_dst)
+            else:
+                print(f"File number {num} does not exist.")
 
         print("Files renamed within Gmod!")
 
@@ -163,23 +166,3 @@ Take all extracted files and save them as a commit, takes a commit description a
 Adds all newly copied files to the repo tree so that they can be committed.
 """
         self.repo.git.add(".")
-
-
-
-def print_columns(list):
-    """Prints a list as two columns to save screen space"""
-    if len(list) % 2 != 0:
-        last = list.pop()
-    else:
-        last = None
-
-    split = len(list) // 2
-    l1 = list[0:split]
-    l2 = list[split:]
-    i = 0
-    for key, value in zip(l1,l2):
-        print("[{}]: {:<20s} [{}]: {}".format(i, key, i + split, value))
-        i += 1
-
-    if last is not None:
-        print(" " * 25, "[{}]: {}".format(i + split, last))

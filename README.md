@@ -24,6 +24,8 @@ Fix these things:
 - Edge cases all around (Specifics will be added as testing occurs)
 - check if overwriting files are smaller than original and ask user if they are sure about this action
 
+- This branch ``Exec-Overhaul`` was created to redo most of the repo methods as actual git commands run through subprocess functions.
+
 Add following functionalities:
 - function for picking files either by name or numerically, and both
 - Create compiled version for non-techy people to use

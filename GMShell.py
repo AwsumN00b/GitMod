@@ -70,7 +70,12 @@ if you wish to share your project with multiple people online
             print("Repo of this name already exists.")
             return
 
-        subprocess.run(["git", "init", name])
+        subprocess.run(["git", "init", "GitMod\\" + name])
+        os.mkdir("GitMod\\" + name + "\\saves")
+        os.mkdir("GitMod\\" + name + "\\smh")#
+
+        git_dir = "--git-dir=" + os.getcwd() + "\\GitMod\\" + name + "\\.git"
+        subprocess.run(["git", git_dir, "add", "--all"])
 
 
     def do_repos(self, args):

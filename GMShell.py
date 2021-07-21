@@ -2,7 +2,7 @@
 
 # Written by Brel00m
 
-import os, git
+import os, subprocess
 from cmd import Cmd
 from getpass import getpass
 from thunking import thunking
@@ -70,7 +70,12 @@ if you wish to share your project with multiple people online
             print("Repo of this name already exists.")
             return
 
-        new_repo = GmodRepo(name)
+        subprocess.run(["git", "init", "GitMod\\" + name])
+        os.mkdir("GitMod\\" + name + "\\saves")
+        os.mkdir("GitMod\\" + name + "\\smh")#
+
+        git_dir = "--git-dir=" + os.getcwd() + "\\GitMod\\" + name + "\\.git"
+        subprocess.run(["git", git_dir, "add", "--all"])
 
 
     def do_repos(self, args):
@@ -90,12 +95,12 @@ This will attempt to clone the repo in to the GitMod directory
         repo_name = get_repo_name_from_url(args)
 
         if repo_name is not False:
-            git.Repo.clone_from(args, "GitMod\\" + repo_name)
+            subprocess.run("git", "clone", args, "GitMod")
             print("Repo has been cloned!")
             self.do_open(repo_name)
 
 
-        # ~~ Commands for inside a repo ~~
+    # ~~ Commands for inside a repo ~~
 
     def do_close(self, args):
         """
@@ -240,5 +245,5 @@ if __name__ == '__main__':
     if KamThunking:
         thunking()
 
-    print("Welcome to GitMod Alpha Ver 0.2")
+    print("Welcome to GitMod Alpha Ver 0.3")
     GMShell().cmdloop()

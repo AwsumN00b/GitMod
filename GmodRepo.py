@@ -2,7 +2,7 @@
 
 # Written by Brel00m
 
-import git, os, shutil
+import os, shutil, subprocess
 from config import Gmod_Location as gmod
 
 
@@ -15,28 +15,22 @@ If the repo already exists, it simply initiate the object for use of its methods
 """
 
         self.name = repo_name
-
-        if not os.path.isdir("GitMod\\" + repo_name):
-            os.mkdir("GitMod\\" + repo_name)
-
-        try:
-            os.mkdir("GitMod\\" + repo_name + "\\smh")
-            os.mkdir("GitMod\\" + repo_name + "\\saves")
-
-            self.repo = git.Repo.init("GitMod\\" + repo_name)
-            self.repo.git.add(".")
-            self.repo.index.commit("Initial Commit via GitMod")
-
-        except FileExistsError:
-            self.repo = git.Repo("GitMod\\" + repo_name)
+        self.dir = os.getcwd() + "\\GitMod\\" + repo_name + "\\.git"
 
 
-    def path_checker(self):
+    def requirements_checker(self):
         """
 Kicks the user out if they havent properly added their gmod install directory.
+Also checks if Git is installed
 """
         if not os.path.exists(gmod):
             print("Please add your Gmod directory path to config.py before continuing")
+            exit()
+
+        try:
+            subprocess.run(["git", "--version"])
+        except:
+            print("Git is not installed correctly, please do this before continuing")
             exit()
 
 
@@ -45,7 +39,7 @@ Kicks the user out if they havent properly added their gmod install directory.
 Lists out all files within a given path, and is of a certain filetype.
 Then prompts user to pick out each file they wish to select.
 """
-        self.path_checker()
+        self.requirements_checker()
 
         files = os.listdir(path)
         files = [file for file in files if filetype in file and file.startswith(self.name + "_")]
@@ -144,13 +138,15 @@ Pushes the repo's commits back to it's Remote, which in most cases is likely goi
         origin = self.repo.remote("origin")
         origin.push()
 
+        subprocess.run("git", "--git-dir=" + self.dir, "push")
+
 
     def fetch(self):
         """
 Retrieves the latest commits from the Remote repo, which is likely a GitHub repo.
 """
-        origin = self.repo.remote("origin")
-        origin.pull()
+
+        subprocess.run("git", "--git-dir=" + self.dir, "pull")
 
 
     def commit(self, commit_desc):
@@ -158,11 +154,11 @@ Retrieves the latest commits from the Remote repo, which is likely a GitHub repo
 Take all extracted files and save them as a commit, takes a commit description as an argument.
 """
         self.add_all()
-        self.repo.index.commit(commit_desc)
+        subprocess.run(["git", "--git-dir=" + self.dir, "commit", "-m", commit_desc])
 
 
     def add_all(self):
         """
 Adds all newly copied files to the repo tree so that they can be committed.
 """
-        self.repo.git.add(".")
+        subprocess.run(["git", "--git-dir=" + self.dir, "add", "--all"])

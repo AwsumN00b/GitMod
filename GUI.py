@@ -1,36 +1,45 @@
-from tkinter import *
+#!/usr/bin/env python3
 
-def main():
+# Written by Brel00m
+
+from tkinter import *
+import os
+from GmodRepo import GmodRepo
+
+def buildGUI():
     root = Tk()
-    root.iconbitmap("GitMod.ico")
     root.title("GitMod")
 
 
     # Tall, not very wide box aligned to left of screen
     # Lists all local repos vertically
-    repolistFrame = Frame(root, bg="blue")
+    repolistFrame = Frame(root)
     repolistFrame.pack(fill=Y, side=LEFT)
 
-    button_open = Button(repolistFrame, text="Open", fg="BLUE")
-    button_open.grid(row=0, column=0)
-
-    # Placeholder list of objects to show size
-    for i in range(1, 7):
-        label_placeholder = Label(repolistFrame, text="Kamiflage")
-        label_placeholder.grid(row=i)
+    # display checklist of local repos
+    selected_repo = StringVar()
+    for repo in os.listdir("Projects"):
+        repo_RadioButton = Radiobutton(repolistFrame, text=repo,
+                                        variable=selected_repo, value=repo, bg="thistle1")
+        repo_RadioButton.pack()
 
 
     # Long bar along top of window
     topFrame = Frame(root, bg="white")
     topFrame.pack(fill=X)
 
-    label_placeholder = Label(topFrame, text="Current Repo: Magic Gay")
-    label_placeholder.pack(side=LEFT)
+    label_repo = Label(topFrame, text="Current Repo: ")
+    label_repo.pack(side=LEFT)
 
-    button_add = Button(topFrame, text="Add", fg="YELLOW")
+    current_repo_name = StringVar()
+    current_repo_name.set("None")
+    label_repo_name = Label(topFrame, text=current_repo_name)
+    label_repo_name.pack(side=LEFT)
+
+    button_add = Button(topFrame, text="Add", bg="lavender")
     button_add.pack(side=RIGHT)
 
-    button_refresh = Button(topFrame, text="Refresh", fg="RED")
+    button_refresh = Button(topFrame, text="Refresh", bg="coral3")
     button_refresh.pack(side=RIGHT)
 
 
@@ -96,4 +105,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    buildGUI()

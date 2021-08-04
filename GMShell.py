@@ -5,7 +5,6 @@
 import os, subprocess
 from cmd import Cmd
 from getpass import getpass
-from thunking import thunking
 from GmodRepo import GmodRepo
 from RepoShell import RepoShell
 from config import *
@@ -242,8 +241,6 @@ Prints a list as two columns to save screen space
 
 
 if __name__ == '__main__':
-    if KamThunking:
-        thunking()
 
     print("Welcome to GitMod Alpha Ver 0.3")
     GMShell().cmdloop()

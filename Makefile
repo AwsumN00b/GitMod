@@ -1,5 +1,5 @@
 main: spec
-	pyinstaller GUI.spec
+	pyinstaller GitMod.spec
 
 spec:
-	pyi-makespec GUI.py -F --icon=GitMod.ico
+	pyi-makespec main.py -F --icon=GitMod.ico --noconsole -n GitMod

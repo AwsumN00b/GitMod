@@ -22,7 +22,7 @@ def main():
     if not os.path.exists("Projects"):
         os.makedirs("Projects")
 
-    GUI.main()
+    GUI.buildGUI()
 
 
 

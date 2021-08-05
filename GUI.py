@@ -6,8 +6,38 @@ from tkinter import *
 import os
 from GmodRepo import GmodRepo
 
+
+def addTopLevel(root):
+    # This is the window for adding a new repo
+
+    repo_name = StringVar().set("")
+
+    addRoot = Toplevel(root)
+    addRoot.title("Add new repo")
+
+    add_instructions = Label(addRoot, text="Name/Github Link for your repo:")
+    add_instructions.pack()
+
+    add_frame = Frame(addRoot, bg="lavender")
+    add_frame.pack(fill=X)
+
+    textbox = Entry(add_frame, textvariable=repo_name, bg="white")
+    textbox.pack(fill=X)
+
+    btn = Button(add_frame, text="Add Repo!",
+                command=lambda)
+    btn.pack(side=RIGHT)
+
+
+
 def buildGUI():
     root = Tk()
+
+    try:
+        root.iconbitmap(default="GitMod.ico")
+    except:
+        pass
+
     root.title("GitMod")
 
 
@@ -36,7 +66,8 @@ def buildGUI():
     label_repo_name = Label(topFrame, text=current_repo_name)
     label_repo_name.pack(side=LEFT)
 
-    button_add = Button(topFrame, text="Add", bg="lavender")
+    button_add = Button(topFrame, text="Add", bg="lavender",
+                command=lambda: addTopLevel(root))
     button_add.pack(side=RIGHT)
 
     button_refresh = Button(topFrame, text="Refresh", bg="coral3")
@@ -97,8 +128,6 @@ def buildGUI():
 
     # Box along bottom of screen
     bottomBoxFrame = Frame(root, bg="white")
-
-
 
 
     root.mainloop()

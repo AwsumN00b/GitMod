@@ -4,18 +4,34 @@
 
 import os, shutil, subprocess
 from config import Gmod_Location as gmod
+from GMShell import get_repo_name_from_url
 
 
 class GmodRepo():
 
     def __init__(self, repo_name):
         """
-Constructor for a gmod repo, this will create some folders in the GitMod directory.
+Constructor for a gmod repo, this will create some folders in the Projects directory.
 If the repo already exists, it simply initiate the object for use of its methods.
 """
 
-        self.name = repo_name
-        self.dir = os.getcwd() + "\\GitMod\\" + repo_name + "\\.git"
+# It seems a constructor might not be the best idea moving forward#
+# The class and its methods are still useful
+# but the cloning and init methods might have to be moved elsewhere
+
+        if repo_name in os.listdir("Projects\\"):
+            repo_url = False
+            self.name = repo_name
+        else:
+            repo_url = get_repo_name_from_url(repo_name)
+
+        if repo_url:
+            subprocess.run("git", "clone", repo_name, "Projects")
+            self.name = repo_name
+        else:
+
+
+        self.dir = os.getcwd() + "\\Projects\\" + repo_name + "\\.git"
 
 
     def requirements_checker(self):
@@ -85,7 +101,7 @@ Takes smh files that have this repo's name as a suffix and copies them over to t
         files = self.pick_files(gmod + r"\garrysmod\data\smh", ".txt")
 
         file_source = gmod + r"\garrysmod\data\smh\\"
-        file_target = "GitMod\\" + self.name + "\\smh\\"
+        file_target = "Projects\\" + self.name + "\\smh\\"
 
         for file in files:
             shutil.copy(file_source + file, file_target + file)
@@ -100,7 +116,7 @@ Takes .gms files and their thumbnail that from Gmod and copies them to the repo
         icons = self.pick_files(gmod + r"\garrysmod\saves", ".jpg")
 
         file_source = gmod + r"\garrysmod\saves\\"
-        file_target = "GitMod\\" + self.name + "\\saves"
+        file_target = "Projects\\" + self.name + "\\saves"
 
         for file in saves:
             shutil.copy(file_source + file, file_target)
@@ -114,8 +130,8 @@ Takes .gms files and their thumbnail that from Gmod and copies them to the repo
         """
 Takes the files in the repo and copies them into Gmod.
 """
-        smh_dir = "GitMod\\" + self.name + "\\smh\\"
-        save_dir = "GitMod\\" + self.name + "\\saves\\"
+        smh_dir = "Projects\\" + self.name + "\\smh\\"
+        save_dir = "Projects\\" + self.name + "\\saves\\"
 
         smh_gmod = gmod + r"\garrysmod\data\smh\\"
         save_gmod = gmod + r"\garrysmod\saves\\"

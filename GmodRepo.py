@@ -4,34 +4,27 @@
 
 import os, shutil, subprocess
 from config import Gmod_Location as gmod
-from GMShell import get_repo_name_from_url
 
 
 class GmodRepo():
 
     def __init__(self, repo_name):
         """
-Constructor for a gmod repo, this will create some folders in the Projects directory.
-If the repo already exists, it simply initiate the object for use of its methods.
+Constructor for a gmod repo object.
 """
-
-# It seems a constructor might not be the best idea moving forward#
-# The class and its methods are still useful
-# but the cloning and init methods might have to be moved elsewhere
-
-        if repo_name in os.listdir("Projects\\"):
-            repo_url = False
-            self.name = repo_name
-        else:
-            repo_url = get_repo_name_from_url(repo_name)
-
-        if repo_url:
-            subprocess.run("git", "clone", repo_name, "Projects")
-            self.name = repo_name
-        else:
+        self.name = repo_name
+        self.dir = "Projects\\" + repo_name
 
 
-        self.dir = os.getcwd() + "\\Projects\\" + repo_name + "\\.git"
+    def initial_commit(self):
+        """
+Checks if Saves and SMH folder exist.
+If they dont, they will be created and committed.
+"""
+        if os.path.exists(self.dir + "Saves") and os.path.exists(self.dir + "SMH"):
+            os.makedirs(self.dir + "Saves")
+            os.makedirs(self.dir + "SMH")
+            subprocess.run("git", "commit" "-am", "Initial GitMod commit")
 
 
     def requirements_checker(self):

@@ -56,8 +56,7 @@ class Add(Toplevel):
             self.parent.all_repos[name] = GmodRepo(name)
 
         self.parent.all_repos[name].initial_commit()
-        self.parent.update_repoListFrame(self.parent.repoListFrame)
-        self.parent.update_current_repo(name)
+        self.parent.refresh()
 
 
     def build(self):
@@ -94,6 +93,7 @@ class GUI(Tk):
     def __init__(self):
         super().__init__()
         self.title("GitMod")
+        self.geometry("600x300")
 
         try:
             self.iconbitmap(default="GitMod.ico")
@@ -133,17 +133,28 @@ class GUI(Tk):
         self.all_repos = dict_repos
 
 
-    def update_repoListFrame(self, frame):
-        frame.pack_forget()
+    def list_all_windows(self):
+        _list = self.winfo_children()
 
-        self.update_local_repos()
-        build_repoListFrame(frame)
+        for item in _list:
+            if item.winfo_children():
+                _list.extend(item.winfo_children())
+
+        return _list
+
+
+    def refresh(self):
+        widget_list = self.list_all_windows()
+        for item in widget_list:
+            item.pack_forget()
+
+        self.buildGUI()
 
 
     def build_repoListFrame(self):
         # Tall, not very wide box aligned to left of screen
         # Lists all local repos vertically
-        repoListFrame = Frame(self, bg="white")
+        repoListFrame = Frame(self, bg="thistle1")
         repoListFrame.pack(side=LEFT, fill=Y)
 
         # generates list of local repos
@@ -154,8 +165,8 @@ class GUI(Tk):
         for repo in self.all_repos:
             repo_RadioButton = Radiobutton(repoListFrame,
                 text=repo, variable=selected_repo, value=repo,
-                bg="thistle1")
-            repo_RadioButton.pack()
+                bg="thistle1", anchor="w")
+            repo_RadioButton.pack(fill="both")
 
 
     def build_topFrame(self):
@@ -179,6 +190,8 @@ class GUI(Tk):
 
         button_refresh = Button(topFrame,
             text="Refresh", bg="coral3")
+        button_refresh.bind("<Button>",
+            lambda x: self.refresh())
         button_refresh.pack(side=RIGHT)
 
 

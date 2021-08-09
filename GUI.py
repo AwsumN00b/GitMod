@@ -48,14 +48,16 @@ class Add(Toplevel):
         url_repo = self.get_repo_name_from_url(name)
         if url_repo:
             # when name is a Git url
-            subprocess.run(["git", "clone", name, "Projects"])
+            subprocess.run(["git", "clone", name, "Projects\\" + url_repo])
             self.parent.all_repos[url_repo] = GmodRepo(url_repo)
+            name = url_repo
         else:
             # create local-only repo
             subprocess.run(["git", "init", "Projects\\" + name])
             self.parent.all_repos[name] = GmodRepo(name)
 
         self.parent.all_repos[name].initial_commit()
+        self.destroy()
         self.parent.refresh()
 
 
@@ -103,7 +105,8 @@ class GUI(Tk):
         self.all_repos = None
         self.update_local_repos()
         self.current_open_repo = None
-        self.stringvar_current_open_repo = StringVar().set("None")
+        self.stringvar_current_open_repo = StringVar()
+        self.stringvar_current_open_repo.set("None")
 
         self.buildGUI()
         self.center_window()
@@ -165,7 +168,8 @@ class GUI(Tk):
         for repo in self.all_repos:
             repo_RadioButton = Radiobutton(repoListFrame,
                 text=repo, variable=selected_repo, value=repo,
-                bg="thistle1", anchor="w")
+                indicatoron=0, bg="thistle1", anchor="w",
+                command=lambda: self.update_current_repo(selected_repo))
             repo_RadioButton.pack(fill="both")
 
 
@@ -173,14 +177,6 @@ class GUI(Tk):
         # Long bar along top of window
         topFrame = Frame(self, bg="white")
         topFrame.pack(fill=X)
-
-        label_repo = Label(topFrame,
-            text="Current Repo: ")
-        label_repo.pack(side=LEFT)
-
-        label_repo_name = Label(topFrame,
-            textvariable=self.stringvar_current_open_repo)
-        label_repo_name.pack(side=LEFT)
 
         button_add = Button(topFrame,
             text="Add", bg="lavender")
@@ -192,7 +188,15 @@ class GUI(Tk):
             text="Refresh", bg="coral3")
         button_refresh.bind("<Button>",
             lambda x: self.refresh())
-        button_refresh.pack(side=RIGHT)
+        button_refresh.pack(side=LEFT)
+
+        label_repo = Label(topFrame,
+        text="Current Repo: ")
+        label_repo.pack(side=LEFT)
+
+        label_repo_name = Label(topFrame,
+        textvariable=self.stringvar_current_open_repo)
+        label_repo_name.pack(side=LEFT)
 
 
     def build_midBoxFrame(self):

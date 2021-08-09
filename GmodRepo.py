@@ -101,6 +101,7 @@ Takes smh files that have this repo's name as a suffix and copies them over to t
 
         self.add_all()
 
+
     def extract_save(self):
         """
 Takes .gms files and their thumbnail that from Gmod and copies them to the repo
@@ -171,3 +172,21 @@ Take all extracted files and save them as a commit, takes a commit description a
 Adds all newly copied files to the repo tree so that they can be committed.
 """
         subprocess.run(["git", "--git-dir=" + self.dir, "add", "--all"])
+
+
+    def list_smh_files(self):
+        """
+Returns a list of all smh files in the directory of the repo
+"""
+        smh_files = os.listdir(self.dir + "\\SMH")
+
+        return smh_files
+
+
+    def list_save_files(self):
+        """
+Returns a list of all save filels in the directory of the repo
+"""
+        save_files = os.listdir(self.dir + "\\Saves")
+
+        return save_files

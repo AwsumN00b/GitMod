@@ -21,10 +21,11 @@ Constructor for a gmod repo object.
 Checks if Saves and SMH folder exist.
 If they dont, they will be created and committed.
 """
-        if os.path.exists(self.dir + "Saves") and os.path.exists(self.dir + "SMH"):
-            os.makedirs(self.dir + "Saves")
-            os.makedirs(self.dir + "SMH")
-            subprocess.run("git", "commit" "-am", "Initial GitMod commit")
+        if not os.path.exists(self.dir + "Saves") and not os.path.exists(self.dir + "SMH"):
+            os.makedirs(self.dir + "\\Saves")
+            os.makedirs(self.dir + "\\SMH")
+            subprocess.run(["git", "--git-dir=" + self.dir + "\\.git", "add", self.dir + "\\."])
+            subprocess.run(["git", "--git-dir=" + self.dir + "\\.git", "commit", "-a", "-m", "Initial GitMod commit"])
 
 
     def requirements_checker(self):

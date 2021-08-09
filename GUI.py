@@ -54,9 +54,9 @@ class Add(Toplevel):
         else:
             # create local-only repo
             subprocess.run(["git", "init", "Projects\\" + name])
-            self.parent.all_repos[name] = GmodRepo(name)
+            self.parent.all_repos.append(GmodRepo(name))
 
-        self.parent.all_repos[name].initial_commit()
+        self.parent.all_repos[-1].initial_commit()
         self.destroy()
         self.parent.refresh()
 
@@ -123,17 +123,16 @@ class GUI(Tk):
 
 
     def update_current_repo(self, s_repo):
-        if s_repo in self.all_repos.values():
-            self.stringvar_current_open_repo.set(s_repo)
-            self.current_open_repo = self.all_repos[s_repo]
+        self.current_open_repo = self.all_repos[s_repo]
+        self.stringvar_current_open_repo.set(self.current_open_repo.name)
 
 
     def update_local_repos(self):
-        dict_repos = {}
+        list_repos = []
         for repo in os.listdir("Projects"):
-            dict_repos[repo] = GmodRepo(repo)
+            list_repos.append(GmodRepo(repo))
 
-        self.all_repos = dict_repos
+        self.all_repos = list_repos
 
 
     def list_all_windows(self):
@@ -157,19 +156,18 @@ class GUI(Tk):
     def build_repoListFrame(self):
         # Tall, not very wide box aligned to left of screen
         # Lists all local repos vertically
+        v = IntVar()
+
         repoListFrame = Frame(self, bg="thistle1")
         repoListFrame.pack(side=LEFT, fill=Y)
 
         # generates list of local repos
-        selected_repo = StringVar()
-        selected_repo.set("None")
-
         self.update_local_repos()
-        for repo in self.all_repos:
+        for i, repo in enumerate(self.all_repos):
             repo_RadioButton = Radiobutton(repoListFrame,
-                text=repo, variable=selected_repo, value=repo,
+                text=repo.name, value=i, variable=v,
                 indicatoron=0, bg="thistle1", anchor="w",
-                command=lambda: self.update_current_repo(selected_repo))
+                command=lambda: self.update_current_repo(v.get()))
             repo_RadioButton.pack(fill="both")
 
 
@@ -221,17 +219,23 @@ class GUI(Tk):
             text="Git Status")
         midKeyTable.grid(row=0, column=3)
 
-        # Section to display save files
-        midKeyTable = Label(midBoxFrame, text="Saves:")
-        midKeyTable.grid(row=1, column=0)
+        if self.current_open_repo is not None:
+            midKeyTable = Label(midBoxFrame, text="Saves:")
+            midKeyTable.grid(row=1, column=0)
 
-        # add function to fill in save data
+            for i in range(len(self.current_open_repo.list_save_files())):
+                saveKeyTable = Label(midBoxFrame,
+                    text=savefile[:-4])
+                saveKeyTable.grid(row=i+1, column=1)
 
-        # Section to display SMH files
-        midKeyTable = Label(midBoxFrame, text="SMH:")
-        midKeyTable.grid(row=2, column=0)
+            # Section to display SMH files
+            midKeyTable = Label(midBoxFrame, text="SMH:")
+            midKeyTable.grid(row=2, column=0)
 
-        # add function to fill in smh data
+            for i in range(len(self.current_open_repo.list_smh_files())):
+                smhKeyTable = Label(midBoxFrame,
+                    text=smhfile[:-4])
+                smhKeyTable.grid(row=i+1, column=1)
 
 
     def build_midLongFrame(self):

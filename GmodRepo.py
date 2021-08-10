@@ -16,16 +16,15 @@ Constructor for a gmod repo object.
         self.dir = "Projects\\" + repo_name
 
 
-    def initial_commit(self):
+    def initiate(self):
         """
 Checks if Saves and SMH folder exist.
-If they dont, they will be created and committed.
+If they dont, they will be created.
 """
-        if not os.path.exists(self.dir + "Saves") and not os.path.exists(self.dir + "SMH"):
+        if not os.path.exists(self.dir + "Saves"):
             os.makedirs(self.dir + "\\Saves")
+        if not os.path.exists(self.dir + "SMH"):
             os.makedirs(self.dir + "\\SMH")
-            subprocess.run(["git", "--git-dir=" + self.dir + "\\.git", "add", self.dir + "\\."])
-            subprocess.run(["git", "--git-dir=" + self.dir + "\\.git", "commit", "-a", "-m", "Initial GitMod commit"])
 
 
     def requirements_checker(self):
@@ -49,8 +48,6 @@ Also checks if Git is installed
 Lists out all files within a given path, and is of a certain filetype.
 Then prompts user to pick out each file they wish to select.
 """
-        self.requirements_checker()
-
         files = os.listdir(path)
         files = [file for file in files if filetype in file and file.startswith(self.name + "_")]
 
@@ -172,14 +169,17 @@ Take all extracted files and save them as a commit, takes a commit description a
         """
 Adds all newly copied files to the repo tree so that they can be committed.
 """
-        subprocess.run(["git", "--git-dir=" + self.dir, "add", "--all"])
+        subprocess.run(["git", "--git-dir=" + self.dir + "\\.git", "add", "--all"])
 
 
     def list_smh_files(self):
         """
 Returns a list of all smh files in the directory of the repo
 """
-        smh_files = os.listdir(self.dir + "\\SMH")
+        try:
+            smh_files = os.listdir(self.dir + r"\SMH")
+        except FileNotFoundError:
+            smh_files = []
 
         return smh_files
 
@@ -188,6 +188,9 @@ Returns a list of all smh files in the directory of the repo
         """
 Returns a list of all save filels in the directory of the repo
 """
-        save_files = os.listdir(self.dir + "\\Saves")
+        try:
+            save_files = os.listdir(self.dir + r"\Saves")
+        except FileNotFoundError:
+            save_files = []
 
         return save_files

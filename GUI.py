@@ -49,14 +49,14 @@ class Add(Toplevel):
         if url_repo:
             # when name is a Git url
             subprocess.run(["git", "clone", name, "Projects\\" + url_repo])
-            self.parent.all_repos[url_repo] = GmodRepo(url_repo)
+            self.parent.all_repos.append(GmodRepo(url_repo))
             name = url_repo
         else:
             # create local-only repo
             subprocess.run(["git", "init", "Projects\\" + name])
             self.parent.all_repos.append(GmodRepo(name))
 
-        self.parent.all_repos[-1].initial_commit()
+        self.parent.all_repos[-1].initiate()
         self.destroy()
         self.parent.refresh()
 
@@ -90,6 +90,11 @@ class Add(Toplevel):
 
 
 
+class Include(Toplevel):
+    pass
+
+
+
 class GUI(Tk):
 
     def __init__(self):
@@ -107,6 +112,8 @@ class GUI(Tk):
         self.current_open_repo = None
         self.stringvar_current_open_repo = StringVar()
         self.stringvar_current_open_repo.set("None")
+        self.stringvar_errormsg = StringVar()
+        self.stringvar_errormsg.set("")
 
         self.buildGUI()
         self.center_window()
@@ -135,6 +142,9 @@ class GUI(Tk):
         self.all_repos = list_repos
 
 
+    def raise_error(self, errormsg):
+        self.stringvar_errormsg.set(errormsg)
+
     def list_all_windows(self):
         _list = self.winfo_children()
 
@@ -145,10 +155,23 @@ class GUI(Tk):
         return _list
 
 
+    def extract(self):
+        if self.current_open_repo is None:
+            self.raise_error("You need to select a repo first!")
+        else:
+            self.current_open_repo.initiate()
+            self.current_open_repo.extract_smh()
+            self.current_open_repo.extract_save()
+            self.refresh()
+
+
     def refresh(self):
         widget_list = self.list_all_windows()
         for item in widget_list:
-            item.pack_forget()
+            try:
+                item.pack_forget()
+            except AttributeError:
+                item.destroy()
 
         self.buildGUI()
 
@@ -211,31 +234,35 @@ class GUI(Tk):
             text="Name")
         midKeyTable.grid(row=0, column=1)
 
-        midKeyTable = Label(midBoxFrame,
-            text="State")
-        midKeyTable.grid(row=0, column=2)
+#        midKeyTable = Label(midBoxFrame,
+#            text="State")
+#        midKeyTable.grid(row=0, column=2)
 
-        midKeyTable = Label(midBoxFrame,
-            text="Git Status")
-        midKeyTable.grid(row=0, column=3)
+#        midKeyTable = Label(midBoxFrame,
+#            text="Git Status")
+#        midKeyTable.grid(row=0, column=3)
 
+        grid_row_len = 1
         if self.current_open_repo is not None:
             midKeyTable = Label(midBoxFrame, text="Saves:")
             midKeyTable.grid(row=1, column=0)
 
-            for i in range(len(self.current_open_repo.list_save_files())):
+            for i, save_files in enumerate(self.current_open_repo.list_save_files()):
                 saveKeyTable = Label(midBoxFrame,
-                    text=savefile[:-4])
-                saveKeyTable.grid(row=i+1, column=1)
+                    text=save_files)
+                saveKeyTable.grid(row=i+2, column=1)
+                grid_row_len = i
 
             # Section to display SMH files
             midKeyTable = Label(midBoxFrame, text="SMH:")
-            midKeyTable.grid(row=2, column=0)
+            midKeyTable.grid(row=grid_row_len, column=0, sticky="w")
 
-            for i in range(len(self.current_open_repo.list_smh_files())):
+            grid_row_len += 1
+
+            for i, smh_files in enumerate(self.current_open_repo.list_smh_files()):
                 smhKeyTable = Label(midBoxFrame,
-                    text=smhfile[:-4])
-                smhKeyTable.grid(row=i+1, column=1)
+                    text=smh_files)
+                smhKeyTable.grid(row=grid_row_len+i, column=1, sticky="w")
 
 
     def build_midLongFrame(self):
@@ -244,9 +271,19 @@ class GUI(Tk):
         midLongFrame.pack(fill=X)
 
         # Buttons inside midLongFrame
+        button_include = Button(midLongFrame,
+            text="Include", bg="royal blue",
+            command=lambda: Include(self))
+        button_include.pack(side=LEFT)
+
         button_extract = Button(midLongFrame,
-            text="Extract", bg="sky blue")
+            text="Extract", bg="sky blue",
+            command=lambda: self.extract())
         button_extract.pack(side=LEFT)
+
+        label_error = Label(midLongFrame,
+            textvariable=self.stringvar_errormsg, fg="red", bg="gray80")
+        label_error.pack(side=LEFT)
 
         button_inject = Button(midLongFrame,
             text="Inject", bg="PaleGreen1")
@@ -280,6 +317,11 @@ class GUI(Tk):
     def buildGUI(self):
         # Runs all the self.build_X() commands
         # They should be run in the order they are written
+        try:
+            self.stringvar_errormsg.set("")
+        except:
+            pass
+
         self.build_repoListFrame()
         self.build_topFrame()
         self.build_midBoxFrame()

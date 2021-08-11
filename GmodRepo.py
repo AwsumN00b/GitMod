@@ -21,9 +21,9 @@ Constructor for a gmod repo object.
 Checks if Saves and SMH folder exist.
 If they dont, they will be created.
 """
-        if not os.path.exists(self.dir + "Saves"):
+        if not os.path.exists(self.dir + "\\Saves"):
             os.makedirs(self.dir + "\\Saves")
-        if not os.path.exists(self.dir + "SMH"):
+        if not os.path.exists(self.dir + "\\SMH"):
             os.makedirs(self.dir + "\\SMH")
 
 
@@ -43,18 +43,31 @@ Also checks if Git is installed
             exit()
 
 
-    def pick_files(self, path, filetype):
+    def pick_files(self, filetype):
         """
 Lists out all files within a given path, and is of a certain filetype.
-Then prompts user to pick out each file they wish to select.
 """
-        files = os.listdir(path)
-        files = [file for file in files if filetype in file and file.startswith(self.name + "_")]
+        if filetype == "smh":
+            path = gmod + r"\garrysmod\data\smh"
+            endw = ".txt"
+        elif filetype == "saves":
+            path = gmod + r"\garrysmod\saves"
+            endw = ".gms"
+        elif filetype == "jpeg":
+            path = gmod + r"\garrysmod\saves"
+            endw = ".jpg"
 
-        return files
+        files_desired = []
+        for file in os.listdir(path):
+            if endw in file:
+                files_desired.append(file)
+
+        # files_desired.sort(key=os.path.getctime)
+
+        return files_desired
 
 
-    def dub_files(self, filetype):
+    def dub_files(self, filetype, file_list):
         """
 Used to rename files within Gmod to have the current repo's name as a prefix.
 GmodRepo utilises these prefixes to know what files are meant to be a part of itself.
@@ -68,34 +81,24 @@ GmodRepo utilises these prefixes to know what files are meant to be a part of it
             path = gmod + r"\garrysmod\saves"
             endw = ".gms"
 
-        files = os.listdir(path)
-        files = [file for file in files if not file.startswith(self.name + "_") and file.endswith(endw)]
-        print_columns(files)
-        print("Type the numbers of files you wish to add (You can type multiple): ")
-        adding_files = [int(i) for i in input().split() if i.isdigit()]
-
-        for num in adding_files:
-            if num > len(files):
-                file_src = path + "\\" + files[num]
-                file_dst = path + "\\" + self.name + "_" + files[num]
-                os.rename(file_src, file_dst)
-            else:
-                print(f"File number {num} does not exist.")
-
-        print("Files renamed within Gmod!")
+        for file in file_list:
+            file_src = path + "\\" + file
+            file_dst = path + "\\" + self.name + "_" + file
+            os.rename(file_src, file_dst)
 
 
     def extract_smh(self):
         """
 Takes smh files that have this repo's name as a suffix and copies them over to the git repo.
 """
-        files = self.pick_files(gmod + r"\garrysmod\data\smh", ".txt")
+        files = self.pick_files("smh")
 
         file_source = gmod + r"\garrysmod\data\smh\\"
         file_target = "Projects\\" + self.name + "\\smh\\"
 
         for file in files:
-            shutil.copy(file_source + file, file_target + file)
+            if file.startswith(self.name):
+                shutil.copy(file_source + file, file_target + file)
 
         self.add_all()
 
@@ -104,16 +107,18 @@ Takes smh files that have this repo's name as a suffix and copies them over to t
         """
 Takes .gms files and their thumbnail that from Gmod and copies them to the repo
 """
-        saves = self.pick_files(gmod + r"\garrysmod\saves", ".gms")
-        icons = self.pick_files(gmod + r"\garrysmod\saves", ".jpg")
+        saves = self.pick_files("saves")
+        icons = self.pick_files("jpeg")
 
         file_source = gmod + r"\garrysmod\saves\\"
         file_target = "Projects\\" + self.name + "\\saves"
 
         for file in saves:
-            shutil.copy(file_source + file, file_target)
+            if file.startswith(self.name):
+                shutil.copy(file_source + file, file_target)
         for file in icons: # taking the save thumbnails into the repo too
-            shutil.copy(file_source + file, file_target)
+            if file.startswith(self.name):
+                shutil.copy(file_source + file, file_target)
 
         self.add_all()
 
@@ -128,11 +133,11 @@ Takes the files in the repo and copies them into Gmod.
         smh_gmod = gmod + r"\garrysmod\data\smh\\"
         save_gmod = gmod + r"\garrysmod\saves\\"
 
-        files = self.pick_files(smh_dir, ".txt")
+        files = self.pick_files("smh")
         for file in files:
             shutil.copy(smh_dir + file, smh_gmod)
 
-        files = self.pick_files(save_dir, ".txt")
+        files = self.pick_files("saves")
         for file in files:
             shutil.copy(save_dir + file, save_gmod)
             file = file[:-4] + ".jpg"  # For copying the save thumbnail too
@@ -190,7 +195,7 @@ Returns a list of all save filels in the directory of the repo
 """
         try:
             save_files = os.listdir(self.dir + r"\Saves")
-        except FileNotFoundError:
+        except:
             save_files = []
 
         return save_files

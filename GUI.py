@@ -91,7 +91,83 @@ class Add(Toplevel):
 
 
 class Include(Toplevel):
-    pass
+    def __init__(self, parent, mode):
+        super().__init__(parent)
+        self.parent = parent
+
+        self.title("Add files to this repo")
+
+        if self.parent.current_open_repo is None:
+            self.parent.raise_error("You need to select a repo first!")
+            self.destroy()
+        else:
+            self.build(mode)
+            self.center_window()
+
+
+    def confirm_include(self, files, filetype):
+        dub = [file for file in files.keys() if files[file].get() == 1]
+        print(dub)
+        self.parent.current_open_repo.dub_files(filetype, dub)
+
+
+    def center_window(self):
+            windowWidth = self.winfo_reqwidth()
+            windowHeight = self.winfo_reqheight()
+
+            posRight = int(self.winfo_screenwidth() / 2 - windowWidth / 2)
+            posDown = int(self.winfo_screenheight() / 2 - windowHeight / 2)
+
+            self.geometry("+{}+{}".format(posRight, posDown))
+
+
+    def build(self, mode):
+        # Window for choosing files to include as part of this project
+        # Chosen files get their filename's changed
+
+        topMenuFrame = Frame(self,
+            bg="gray80")
+        topMenuFrame.pack(fill=X)
+
+        button_close = Button(topMenuFrame, text="Close",
+            command=lambda: self.destroy())
+        button_close.pack(side=RIGHT)
+
+        button_confirm = Button(topMenuFrame,
+            text="Confirm", bg="royal blue",
+            command=lambda: self.confirm_include(files, mode))
+        button_confirm.pack(side=LEFT)
+
+        if mode == "saves":
+            files = {file: IntVar() for file in self.parent.current_open_repo.pick_files("saves")}
+        elif mode == "smh":
+            files = {file: IntVar() for file in self.parent.current_open_repo.pick_files("smh")}
+
+        # Scrollbar for the long checkbox
+        scrollFrame = Frame(self)
+        scrollFrame.pack(fill=BOTH)
+
+        cbox_canvas = Canvas(scrollFrame)
+        cbox_canvas.pack(side=LEFT, fill=BOTH)
+
+        cbox_scrollbar = Scrollbar(scrollFrame, orient=VERTICAL,
+            command=cbox_canvas.yview)
+        cbox_scrollbar.pack(side=RIGHT, fill=Y, anchor="e")
+
+        cbox_canvas.configure(yscrollcommand=cbox_scrollbar.set)
+        cbox_canvas.bind("<Configure>",
+            lambda e: cbox_canvas.configure(scrollregion=cbox_canvas.bbox("all")))
+
+        cboxFrame = Frame(cbox_canvas)
+
+        for i, file in enumerate(files.keys()):
+            checkBox_file = Checkbutton(cboxFrame,
+                text=file, variable=files[file], anchor="w",
+                width=60)
+            checkBox_file.pack(anchor="w")
+
+        cbox_canvas.create_window((0,0), window=cboxFrame, anchor="nw")
+
 
 
 
@@ -144,6 +220,7 @@ class GUI(Tk):
 
     def raise_error(self, errormsg):
         self.stringvar_errormsg.set(errormsg)
+
 
     def list_all_windows(self):
         _list = self.winfo_children()
@@ -250,8 +327,8 @@ class GUI(Tk):
             for i, save_files in enumerate(self.current_open_repo.list_save_files()):
                 saveKeyTable = Label(midBoxFrame,
                     text=save_files)
-                saveKeyTable.grid(row=i+2, column=1)
-                grid_row_len = i
+                saveKeyTable.grid(row=i+2, column=1, sticky="w")
+                grid_row_len = i + 3
 
             # Section to display SMH files
             midKeyTable = Label(midBoxFrame, text="SMH:")
@@ -262,7 +339,7 @@ class GUI(Tk):
             for i, smh_files in enumerate(self.current_open_repo.list_smh_files()):
                 smhKeyTable = Label(midBoxFrame,
                     text=smh_files)
-                smhKeyTable.grid(row=grid_row_len+i, column=1, sticky="w")
+                smhKeyTable.grid(row=grid_row_len+i+1, column=1, sticky="w")
 
 
     def build_midLongFrame(self):
@@ -271,10 +348,15 @@ class GUI(Tk):
         midLongFrame.pack(fill=X)
 
         # Buttons inside midLongFrame
-        button_include = Button(midLongFrame,
-            text="Include", bg="royal blue",
-            command=lambda: Include(self))
-        button_include.pack(side=LEFT)
+        button_include_saves = Button(midLongFrame,
+            text="Include Saves", bg="royal blue",
+            command=lambda: Include(self, "saves"))
+        button_include_saves.pack(side=LEFT)
+
+        button_include_smh = Button(midLongFrame,
+            text="Include SMH", bg="royal blue",
+            command=lambda: Include(self, "smh"))
+        button_include_smh.pack(side=LEFT)
 
         button_extract = Button(midLongFrame,
             text="Extract", bg="sky blue",

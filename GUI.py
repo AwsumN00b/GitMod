@@ -66,8 +66,6 @@ class Add(Toplevel):
         self.geometry("400x75")
         self.overrideredirect(1)
 
-        new_repo_name = StringVar().set("")
-
         add_instructions = Label(self,
         text="Name/Github Link for your repo:")
         add_instructions.pack()
@@ -167,6 +165,57 @@ class Include(Toplevel):
             checkBox_file.pack(anchor="w")
 
         cbox_canvas.create_window((0,0), window=cboxFrame, anchor="nw")
+
+
+
+class Commit(Toplevel):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.parent = parent
+
+        if self.parent.current_open_repo is None:
+            self.parent.raise_error("You need to select a repo first!")
+            self.destroy()
+        else:
+            self.build()
+            self.center_window()
+
+
+    def center_window(self):
+            windowWidth = self.winfo_reqwidth()
+            windowHeight = self.winfo_reqheight()
+
+            posRight = int(self.winfo_screenwidth() / 2 - windowWidth / 2)
+            posDown = int(self.winfo_screenheight() / 2 - windowHeight / 2)
+
+            self.geometry("+{}+{}".format(posRight, posDown))
+
+
+    def commit(self, desc):
+        self.parent.current_open_repo.commit(desc)
+        self.destroy()
+
+
+    def build(self):
+        commitFrame = Frame(self)
+        commitFrame.pack()
+        self.geometry("500x150")
+
+        promptLabel = Label(commitFrame,
+        text="Describe what changes you have made:", fg="black")
+        promptLabel.pack(anchor="w")
+
+        textbox = Text(commitFrame,
+            font=("Helvetica", 12), bg="white", height=4)
+        textbox.pack()
+
+        btn_close = Button(commitFrame, text="Close",
+        command=lambda: self.destroy())
+        btn_close.pack(side=LEFT)
+
+        btn_add = Button(commitFrame, text="Commit!",
+        command=lambda: self.commit(textbox.get("1.0","end-1c")))
+        btn_add.pack(side=RIGHT)
 
 
 
@@ -379,15 +428,18 @@ class GUI(Tk):
 
         # Buttons inside bottomBoxFrame
         button_commit = Button(bottomRightFrame,
-            text="Commit", bg="steel blue", height=1)
+            text="Commit", bg="steel blue", height=1,
+            command=lambda: Commit(self))
         button_commit.pack()
 
         button_push = Button(bottomRightFrame,
-            text="Push", bg="gold2", height=1)
+            text="Push", bg="gold2", height=1,
+            command=lambda: self.current_open_repo.push())
         button_push.pack(fill=X)
 
         button_pull = Button(bottomRightFrame,
-            text="Pull", bg="plum3", height=1)
+            text="Pull", bg="plum3", height=1,
+            command=lambda: self.current_open_repo.pull())
         button_pull.pack(fill=X)
 
 

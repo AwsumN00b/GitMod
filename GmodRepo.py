@@ -14,6 +14,7 @@ Constructor for a gmod repo object.
 """
         self.name = repo_name
         self.dir = "Projects\\" + repo_name
+        self.git_dir = "--git-dir=" + self.dir + "\\.git"
 
 
     def initiate(self):
@@ -143,18 +144,14 @@ Takes the files in the repo and copies them into Gmod.
         """
 Pushes the repo's commits back to it's Remote, which in most cases is likely going to be a GitHub repo.
 """
-        origin = self.repo.remote("origin")
-        origin.push()
-
-        subprocess.run("git", "--git-dir=" + self.dir, "push")
+        subprocess.run(["git", self.git_dir, "push"])
 
 
     def fetch(self):
         """
 Retrieves the latest commits from the Remote repo, which is likely a GitHub repo.
 """
-
-        subprocess.run("git", "--git-dir=" + self.dir, "pull")
+        subprocess.run(["git", self.git_dir, "pull"])
 
 
     def commit(self, commit_desc):
@@ -162,19 +159,31 @@ Retrieves the latest commits from the Remote repo, which is likely a GitHub repo
 Take all extracted files and save them as a commit, takes a commit description as an argument.
 """
         self.add_all()
-        subprocess.run(["git", "--git-dir=" + self.dir, "commit", "-m", commit_desc])
+        if len(commit_desc) <= 50:
+            subprocess.run(["git", self.git_dir, "commit", "-m", commit_desc])
+        else:
+            subprocess.run(["git", self.git_dir, "commit", "-m", commit_desc[:50], "-m", commit_desc[50:]])
 
 
     def add_all(self):
         """
 Adds all newly copied files to the repo tree so that they can be committed.
 """
-        subprocess.run(["git", "--git-dir=" + self.dir + "\\.git", "add", "--all"])
+        files = [self.dir+file for file in self.list_smh_files()]
+
+        for file in files:
+            subprocess.run(["git", self.git_dir, "add", file])
+
+        files = [self.dir+file for file in self.list_save_files()]
+
+        for file in files:
+            subprocess.run(["git", self.git_dir, file])
 
 
     def list_smh_files(self):
         """
-Returns a list of all smh files in the directory of the repo
+Returns a list of all smh files in the directory of the repo.
+The local path is included in each string
 """
         try:
             smh_files = os.listdir(self.dir + r"\SMH")

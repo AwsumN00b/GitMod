@@ -130,18 +130,13 @@ Takes the files in the repo and copies them into Gmod.
         smh_dir = "Projects\\" + self.name + "\\smh\\"
         save_dir = "Projects\\" + self.name + "\\saves\\"
 
-        smh_gmod = gmod + r"\garrysmod\data\smh\\"
-        save_gmod = gmod + r"\garrysmod\saves\\"
+        if os.path.exists(smh_dir):
+            for file in os.listdir(smh_dir):
+                shutil.copy(smh_dir+file, gmod+"\\garrysmod\\data\\smh\\")
 
-        files = self.pick_files("smh")
-        for file in files:
-            shutil.copy(smh_dir + file, smh_gmod)
-
-        files = self.pick_files("saves")
-        for file in files:
-            shutil.copy(save_dir + file, save_gmod)
-            file = file[:-4] + ".jpg"  # For copying the save thumbnail too
-            shutil.copy(save_dir + file, save_gmod)
+        if os.path.exists(save_dir):
+            for file in os.listdir(save_dir):
+                shutil.copy(save_dir+file, gmod+"\\garrysmod\\saves\\")
 
 
     def push(self):

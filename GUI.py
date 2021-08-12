@@ -170,13 +170,12 @@ class Include(Toplevel):
 
 
 
-
 class GUI(Tk):
 
     def __init__(self):
         super().__init__()
         self.title("GitMod")
-        self.geometry("600x300")
+        self.geometry("600x400")
 
         try:
             self.iconbitmap(default="GitMod.ico")
@@ -299,7 +298,7 @@ class GUI(Tk):
 
     def build_midBoxFrame(self):
         # Big Box in middle of page
-        midBoxFrame = Frame(self, bg="white")
+        midBoxFrame = Frame(self, bg="white", height=395)
         midBoxFrame.pack(fill=X)
 
         # Key of table
@@ -368,32 +367,33 @@ class GUI(Tk):
         label_error.pack(side=LEFT)
 
         button_inject = Button(midLongFrame,
-            text="Inject", bg="PaleGreen1")
+            text="Inject", bg="PaleGreen1",
+            command=lambda: self.current_open_repo.inject())
         button_inject.pack(side=RIGHT)
 
 
     def build_bottomRightFrame(self):
         # Long Frame along bottom right side of window for Buttons
-        bottomRightFrame = Frame(self, bg="white")
+        bottomRightFrame = Frame(self, bg="white", height=3)
         bottomRightFrame.pack(side=RIGHT)
 
         # Buttons inside bottomBoxFrame
         button_commit = Button(bottomRightFrame,
-            text="Commit", bg="steel blue")
+            text="Commit", bg="steel blue", height=1)
         button_commit.pack()
 
         button_push = Button(bottomRightFrame,
-            text="Push", bg="gold2")
+            text="Push", bg="gold2", height=1)
         button_push.pack(fill=X)
 
         button_pull = Button(bottomRightFrame,
-            text="Pull", bg="plum3")
+            text="Pull", bg="plum3", height=1)
         button_pull.pack(fill=X)
 
 
     def build_bottomBoxFrame(self):
         # Box along bottom of screen
-        bottomBoxFrame = Frame(self, bg="white")
+        bottomBoxFrame = Frame(self, bg="white", height=3)
 
 
     def buildGUI(self):

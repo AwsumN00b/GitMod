@@ -22,7 +22,12 @@ To make this program work, you are going to need the following installed on your
 
 ## To Do
 Fix/Add these things:
+- prompt user at initial launch for:
+- * Git global email
+- * Git global Name
+- * How do you sign in to GitHub locally beforehand?
 - check if overwriting files are smaller than original and ask user if they are sure about this action
+- GmodRepo.dub_files() does not dub save images
 
 ## Credits
 If you have assisted in any way, please add your name!

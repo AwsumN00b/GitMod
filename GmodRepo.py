@@ -169,15 +169,16 @@ Take all extracted files and save them as a commit, takes a commit description a
         """
 Adds all newly copied files to the repo tree so that they can be committed.
 """
-        files = [self.dir+file for file in self.list_smh_files()]
+        files = [self.dir+"\\SMH\\"+file for file in self.list_smh_files()]
+        print(files)
 
         for file in files:
             subprocess.run(["git", self.git_dir, "add", file])
 
-        files = [self.dir+file for file in self.list_save_files()]
+        files = [self.dir+"\\Saves\\"+file for file in self.list_save_files()]
 
         for file in files:
-            subprocess.run(["git", self.git_dir, file])
+            subprocess.run(["git", self.git_dir, "add", file])
 
 
     def list_smh_files(self):

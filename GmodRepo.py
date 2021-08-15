@@ -8,13 +8,12 @@ from config import Gmod_Location as gmod
 
 class GmodRepo():
 
-    def __init__(self, repo_name):
+    def __init__(self, repo_name, dir):
         """
 Constructor for a gmod repo object.
 """
         self.name = repo_name
-        self.dir = "Projects\\" + repo_name
-        self.git_dir = "--git-dir=" + self.dir + "\\.git"
+        self.dir = dir + "\\Projects\\" + repo_name
 
 
     def initiate(self):
@@ -94,8 +93,8 @@ Takes smh files that have this repo's name as a suffix and copies them over to t
 """
         files = self.pick_files("smh")
 
-        file_source = gmod + r"\garrysmod\data\smh\\"
-        file_target = "Projects\\" + self.name + "\\smh\\"
+        file_source = gmod + "\\garrysmod\\data\\smh\\"
+        file_target = self.dir + "\\smh\\"
 
         for file in files:
             if file.startswith(self.name):
@@ -111,8 +110,8 @@ Takes .gms files and their thumbnail that from Gmod and copies them to the repo
         saves = self.pick_files("saves")
         icons = self.pick_files("jpeg")
 
-        file_source = gmod + r"\garrysmod\saves\\"
-        file_target = "Projects\\" + self.name + "\\saves"
+        file_source = gmod + "\\garrysmod\\saves\\"
+        file_target = self.dir + "\\Saves\\"
 
         for file in saves:
             if file.startswith(self.name):
@@ -128,8 +127,8 @@ Takes .gms files and their thumbnail that from Gmod and copies them to the repo
         """
 Takes the files in the repo and copies them into Gmod.
 """
-        smh_dir = "Projects\\" + self.name + "\\smh\\"
-        save_dir = "Projects\\" + self.name + "\\saves\\"
+        smh_dir = self.dir + "\\SMH\\"
+        save_dir = self.dir + "\\Saves\\"
 
         if os.path.exists(smh_dir):
             for file in os.listdir(smh_dir):
@@ -144,14 +143,14 @@ Takes the files in the repo and copies them into Gmod.
         """
 Pushes the repo's commits back to it's Remote, which in most cases is likely going to be a GitHub repo.
 """
-        subprocess.run(["git", self.git_dir, "push"])
+        subprocess.run(["git", "push"])
 
 
-    def fetch(self):
+    def pull(self):
         """
 Retrieves the latest commits from the Remote repo, which is likely a GitHub repo.
 """
-        subprocess.run(["git", self.git_dir, "pull"])
+        subprocess.run(["git", "pull"])
 
 
     def commit(self, commit_desc):
@@ -160,25 +159,16 @@ Take all extracted files and save them as a commit, takes a commit description a
 """
         self.add_all()
         if len(commit_desc) <= 50:
-            subprocess.run(["git", self.git_dir, "commit", "-m", commit_desc])
+            subprocess.run(["git", "commit", "-m", commit_desc])
         else:
-            subprocess.run(["git", self.git_dir, "commit", "-m", commit_desc[:50], "-m", commit_desc[50:]])
+            subprocess.run(["git", "commit", "-m", commit_desc[:50], "-m", commit_desc[50:]])
 
 
     def add_all(self):
         """
 Adds all newly copied files to the repo tree so that they can be committed.
 """
-        files = [self.dir+"\\SMH\\"+file for file in self.list_smh_files()]
-        print(files)
-
-        for file in files:
-            subprocess.run(["git", self.git_dir, "add", file])
-
-        files = [self.dir+"\\Saves\\"+file for file in self.list_save_files()]
-
-        for file in files:
-            subprocess.run(["git", self.git_dir, "add", file])
+        subprocess.run(["git", "add", "--all"])
 
 
     def list_smh_files(self):
@@ -187,7 +177,7 @@ Returns a list of all smh files in the directory of the repo.
 The local path is included in each string
 """
         try:
-            smh_files = os.listdir(self.dir + r"\SMH")
+            smh_files = os.listdir(self.dir + "\\SMH")
         except FileNotFoundError:
             smh_files = []
 
@@ -199,7 +189,7 @@ The local path is included in each string
 Returns a list of all save filels in the directory of the repo
 """
         try:
-            save_files = os.listdir(self.dir + r"\Saves")
+            save_files = os.listdir(self.dir + "\\Saves")
         except:
             save_files = []
 

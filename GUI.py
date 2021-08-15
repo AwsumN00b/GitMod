@@ -49,12 +49,12 @@ class Add(Toplevel):
         if url_repo:
             # when name is a Git url
             subprocess.run(["git", "clone", name, "Projects\\" + url_repo])
-            self.parent.all_repos.append(GmodRepo(url_repo))
+            self.parent.all_repos.append(GmodRepo(url_repo, self.parent.base_cwd))
             name = url_repo
         else:
             # create local-only repo
             subprocess.run(["git", "init", "Projects\\" + name])
-            self.parent.all_repos.append(GmodRepo(name))
+            self.parent.all_repos.append(GmodRepo(name, self.base_cwd))
 
         self.parent.all_repos[-1].initiate()
         self.destroy()
@@ -232,13 +232,14 @@ class GUI(Tk):
             pass
 
         self.all_repos = None
-        self.update_local_repos()
         self.current_open_repo = None
         self.stringvar_current_open_repo = StringVar()
         self.stringvar_current_open_repo.set("None")
         self.stringvar_errormsg = StringVar()
         self.stringvar_errormsg.set("")
+        self.base_cwd = os.getcwd()
 
+        self.update_local_repos()
         self.buildGUI()
         self.center_window()
 
@@ -256,12 +257,17 @@ class GUI(Tk):
     def update_current_repo(self, s_repo):
         self.current_open_repo = self.all_repos[s_repo]
         self.stringvar_current_open_repo.set(self.current_open_repo.name)
+        os.chdir(self.base_cwd)
+        os.chdir("Projects\\"+self.current_open_repo.name)
 
 
     def update_local_repos(self):
         list_repos = []
-        for repo in os.listdir("Projects"):
-            list_repos.append(GmodRepo(repo))
+        project_dir = self.base_cwd + "\\Projects"
+        print(self.base_cwd)
+
+        for repo in os.listdir(project_dir):
+            list_repos.append(GmodRepo(repo, self.base_cwd))
 
         self.all_repos = list_repos
 

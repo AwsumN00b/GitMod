@@ -3,17 +3,17 @@
 # Written by Brel00m
 
 import os, shutil, subprocess
-from config import Gmod_Location as gmod
 
 
 class GmodRepo():
 
-    def __init__(self, repo_name, dir):
+    def __init__(self, repo_name, gmod, dir):
         """
 Constructor for a gmod repo object.
 """
         self.name = repo_name
         self.dir = dir + "\\Projects\\" + repo_name
+        self.gmod = gmod
 
 
     def initiate(self):
@@ -27,34 +27,18 @@ If they dont, they will be created.
             os.makedirs(self.dir + "\\SMH")
 
 
-    def requirements_checker(self):
-        """
-Kicks the user out if they havent properly added their gmod install directory.
-Also checks if Git is installed
-"""
-        if not os.path.exists(gmod):
-            print("Please add your Gmod directory path to config.py before continuing")
-            exit()
-
-        try:
-            subprocess.run(["git", "--version"])
-        except:
-            print("Git is not installed correctly, please do this before continuing")
-            exit()
-
-
     def pick_files(self, filetype):
         """
 Lists out all files within a given path, and is of a certain filetype.
 """
         if filetype == "smh":
-            path = gmod + r"\garrysmod\data\smh"
+            path = self.gmod + r"\garrysmod\data\smh"
             endw = ".txt"
         elif filetype == "saves":
-            path = gmod + r"\garrysmod\saves"
+            path = self.gmod + r"\garrysmod\saves"
             endw = ".gms"
         elif filetype == "jpeg":
-            path = gmod + r"\garrysmod\saves"
+            path = self.gmod + r"\garrysmod\saves"
             endw = ".jpg"
 
         files_desired = []
@@ -75,10 +59,10 @@ GmodRepo utilises these prefixes to know what files are meant to be a part of it
 
         # Get correct file path for each file type
         if filetype == "smh":
-            path = gmod + r"\garrysmod\data\smh"
+            path = self.gmod + r"\garrysmod\data\smh"
             endw = ".txt"
         elif filetype == "saves":
-            path = gmod + r"\garrysmod\saves"
+            path = self.gmod + r"\garrysmod\saves"
             endw = ".gms"
 
         for file in file_list:
@@ -93,7 +77,7 @@ Takes smh files that have this repo's name as a suffix and copies them over to t
 """
         files = self.pick_files("smh")
 
-        file_source = gmod + "\\garrysmod\\data\\smh\\"
+        file_source = self.gmod + "\\garrysmod\\data\\smh\\"
         file_target = self.dir + "\\smh\\"
 
         for file in files:
@@ -110,7 +94,7 @@ Takes .gms files and their thumbnail that from Gmod and copies them to the repo
         saves = self.pick_files("saves")
         icons = self.pick_files("jpeg")
 
-        file_source = gmod + "\\garrysmod\\saves\\"
+        file_source = self.gmod + "\\garrysmod\\saves\\"
         file_target = self.dir + "\\Saves\\"
 
         for file in saves:
@@ -132,11 +116,11 @@ Takes the files in the repo and copies them into Gmod.
 
         if os.path.exists(smh_dir):
             for file in os.listdir(smh_dir):
-                shutil.copy(smh_dir+file, gmod+"\\garrysmod\\data\\smh\\")
+                shutil.copy(smh_dir+file, self.gmod+"\\garrysmod\\data\\smh\\")
 
         if os.path.exists(save_dir):
             for file in os.listdir(save_dir):
-                shutil.copy(save_dir+file, gmod+"\\garrysmod\\saves\\")
+                shutil.copy(save_dir+file, self.gmod+"\\garrysmod\\saves\\")
 
 
     def push(self):

@@ -49,12 +49,12 @@ class Add(Toplevel):
         if url_repo:
             # when name is a Git url
             subprocess.run(["git", "clone", name, "Projects\\" + url_repo])
-            self.parent.all_repos.append(GmodRepo(url_repo, self.parent.base_cwd))
+            self.parent.all_repos.append(GmodRepo(url_repo, self.parent.gmod_dir, self.parent.base_cwd))
             name = url_repo
         else:
             # create local-only repo
             subprocess.run(["git", "init", "Projects\\" + name])
-            self.parent.all_repos.append(GmodRepo(name, self.base_cwd))
+            self.parent.all_repos.append(GmodRepo(name, self.parent.gmod_dir, self.base_cwd))
 
         self.parent.all_repos[-1].initiate()
         self.destroy()
@@ -221,7 +221,7 @@ class Commit(Toplevel):
 
 class GUI(Tk):
 
-    def __init__(self):
+    def __init__(self, config):
         super().__init__()
         self.title("GitMod")
         self.geometry("600x400")
@@ -238,6 +238,7 @@ class GUI(Tk):
         self.stringvar_errormsg = StringVar()
         self.stringvar_errormsg.set("")
         self.base_cwd = os.getcwd()
+        self.gmod_dir = config
 
         self.update_local_repos()
         self.buildGUI()
@@ -267,7 +268,7 @@ class GUI(Tk):
         print(self.base_cwd)
 
         for repo in os.listdir(project_dir):
-            list_repos.append(GmodRepo(repo, self.base_cwd))
+            list_repos.append(GmodRepo(repo, self.gmod_dir, self.base_cwd))
 
         self.all_repos = list_repos
 
